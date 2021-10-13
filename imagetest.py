@@ -50,32 +50,29 @@ for y in range(height):
 x_value = 0
 y_value = 0
 
-#combine gx_list and gy_list.
-for y in range(height):
-	for x in range(width):
-		if x == 0 or x == width - 1 or y == 0 or y == height - 1:
-			g_complete.append(0)
-			continue
-		x_value = gx_list[y*width + x]
-		y_value = gy_list[y*width + x]
-		value = int(math.sqrt(x_value*x_value + y_value*y_value))
-		g_complete.append(value)
+#Combine gx_list and gy_list
+for x_edge,y_edge in zip(gx_list,gy_list):
+	if x_edge == 0 or y_edge == 0:
+		g_complete.append(0)
+		continue
+	value = int(math.sqrt(x_edge*x_edge + y_edge*y_edge))
+	g_complete.append(value)
 
-#scale the values to be in the range 0-255
-for y in range(height):
-    for x in range(width):
-        value = (g_complete[y*width + x] / 1020) * 255
-        edge.append(value)
+#Scale g_complete to be in the range 0-255
+for edge_full in g_complete:
+	value = (edge_full / 1020) * 255
+	edge.append(value)
 edge_image.putdata(edge)
 edge_image.save("edge.jpg")
 
-#convert edge image to binary image
-for y in range(height):
-    for x in range(width):
-    	if edge[y*width + x] < threshold:
-    		binary.append(0)
-    	else:
-    		binary.append(1)
+#Compute binary image
+for pixel in edge:
+    if pixel < threshold:
+        binary.append(0)
+    else:
+        binary.append(1)
+
+
 binary_image.putdata(binary)
 binary_image.save("binary.jpg")
 
