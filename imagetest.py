@@ -11,10 +11,12 @@ threshold = 50
 greyscale = []
 edge = []
 binary = []
-
 gx_list = []
 gy_list = []
 g_complete = []
+
+#The max value in g_complete will be 255 * sqrt(20)
+g_complete_scale = 2*math.sqrt(5)
 
 #convert image to greyscale
 for y in range(height):
@@ -60,7 +62,8 @@ for x_edge,y_edge in zip(gx_list,gy_list):
 
 #Scale g_complete to be in the range 0-255
 for edge_full in g_complete:
-	value = (edge_full / 1020) * 255
+	#value = (edge_full / 1020) * 255
+	value = edge_full / g_complete_scale 
 	edge.append(value)
 edge_image.putdata(edge)
 edge_image.save("edge.jpg")
@@ -71,7 +74,6 @@ for pixel in edge:
         binary.append(0)
     else:
         binary.append(1)
-
 
 binary_image.putdata(binary)
 binary_image.save("binary.jpg")
