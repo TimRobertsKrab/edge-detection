@@ -1,8 +1,17 @@
 from PIL import Image
 import math
+import sys
 
-#change to whatever image you want
-im = Image.open("Chemistry-building-image.jpg")
+#Command line argument to be the name of the image file
+name = sys.argv[1]
+try:
+    im = Image.open(name)
+except FileNotFoundError:
+    print("No file")
+    exit(0)
+# Obtains the name of the file without the file extension
+name = name.split(".")[0]
+
 width, height = im.size
 grey_image = Image.new('L',(width,height))
 edge_image = Image.new('L',(width,height))
@@ -26,29 +35,29 @@ for y in range(height):
         greyscale.append(value)
 
 grey_image.putdata(greyscale)
-grey_image.save("bw.jpg")
+grey_image.save(name + "-bw.jpg")
 
 #run a sobel filter across the greyscale image.
 #output edges across the horizontal into gx_list.
 #output edges across the vertical into gy_list.
 for y in range(height):
-	for x in range(width):
-		if x == 0 or x == width - 1 or y == 0 or y == height - 1:
-		    gx_list.append(0)
-		    gy_list.append(0)
-		    continue
-		gx_list.append(grey_image.getpixel((x-1,y-1)) \
-			- grey_image.getpixel((x+1,y-1)) \
-			+ 2 * grey_image.getpixel((x-1,y)) \
-			- 2 * grey_image.getpixel((x+1,y)) \
-			+ grey_image.getpixel((x-1,y+1)) \
-			- grey_image.getpixel((x+1,y+1)))
-		gy_list.append(grey_image.getpixel((x-1,y-1)) \
-			+ 2 * grey_image.getpixel((x,y-1)) \
-			+ grey_image.getpixel((x+1,y-1)) \
-			- grey_image.getpixel((x-1,y+1)) \
-			- 2 * grey_image.getpixel((x,y+1)) \
-			- grey_image.getpixel((x+1,y+1)))
+    for x in range(width):
+        if x == 0 or x == width - 1 or y == 0 or y == height - 1:
+            gx_list.append(0)
+            gy_list.append(0)
+            continue
+        gx_list.append(grey_image.getpixel((x-1,y-1)) \
+		- grey_image.getpixel((x+1,y-1)) \
+		+ 2 * grey_image.getpixel((x-1,y)) \
+		- 2 * grey_image.getpixel((x+1,y)) \
+		+ grey_image.getpixel((x-1,y+1)) \
+		- grey_image.getpixel((x+1,y+1)))
+        gy_list.append(grey_image.getpixel((x-1,y-1)) \
+		+ 2 * grey_image.getpixel((x,y-1)) \
+		+ grey_image.getpixel((x+1,y-1)) \
+		- grey_image.getpixel((x-1,y+1)) \
+		- 2 * grey_image.getpixel((x,y+1)) \
+		- grey_image.getpixel((x+1,y+1)))
 x_value = 0
 y_value = 0
 
@@ -66,7 +75,7 @@ for edge_full in g_complete:
 	value = edge_full / g_complete_scale 
 	edge.append(value)
 edge_image.putdata(edge)
-edge_image.save("edge.jpg")
+edge_image.save(name+"-edge.jpg")
 
 #Compute binary image
 for pixel in edge:
@@ -76,6 +85,6 @@ for pixel in edge:
         binary.append(1)
 
 binary_image.putdata(binary)
-binary_image.save("binary.jpg")
+binary_image.save(name+"-binary.jpg")
 
 
