@@ -3,11 +3,15 @@ import math
 import sys
 
 #Command line argument to be the name of the image file
-name = sys.argv[1]
+try:
+    name = sys.argv[1]
+except IndexError:
+    print("No file entered")
+    exit(0)
 try:
     im = Image.open(name)
 except FileNotFoundError:
-    print("No file")
+    print("File does not exist.")
     exit(0)
 # Obtains the name of the file without the file extension
 name = name.split(".")[0]
@@ -46,18 +50,20 @@ for y in range(height):
             gx_list.append(0)
             gy_list.append(0)
             continue
-        gx_list.append(grey_image.getpixel((x-1,y-1)) \
-		- grey_image.getpixel((x+1,y-1)) \
+        a = grey_image.getpixel((x-1,y-1))
+        b = grey_image.getpixel((x+1,y-1))
+        c = grey_image.getpixel((x+1,y+1))
+        d = grey_image.getpixel((x-1,y+1))
+
+        gx_list.append(a - b \
 		+ 2 * grey_image.getpixel((x-1,y)) \
 		- 2 * grey_image.getpixel((x+1,y)) \
-		+ grey_image.getpixel((x-1,y+1)) \
-		- grey_image.getpixel((x+1,y+1)))
-        gy_list.append(grey_image.getpixel((x-1,y-1)) \
+		+ d - c)
+        gy_list.append(a \
 		+ 2 * grey_image.getpixel((x,y-1)) \
-		+ grey_image.getpixel((x+1,y-1)) \
-		- grey_image.getpixel((x-1,y+1)) \
+		+ b - d \
 		- 2 * grey_image.getpixel((x,y+1)) \
-		- grey_image.getpixel((x+1,y+1)))
+		- c)
 x_value = 0
 y_value = 0
 
